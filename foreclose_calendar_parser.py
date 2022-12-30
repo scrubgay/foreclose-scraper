@@ -13,20 +13,17 @@ def scrapeLinks(soup) :
     for entry in entries :
         dateString = entry.attrs["dayid"]
         dates.append(dateString)
+
+    return dates
     
-    prevLink = soup.select_one(".CALNAV > a").attrs["href"]
-
-    return dates, prevLink
-
 def main() :
     args_ = {
         "baseLink": "https://www.alachua.realforeclose.com/index.cfm?zaction=AUCTION&Zmethod=PREVIEW&AUCTIONDATE=",
         "inputDir": "./data/calendar",
-        "outputDir": "./data"
+        "outputDir": "./data",
     }
 
     fcPages = []
-    prevLinks = []
 
     files = getMHTMLs(args_["inputDir"])
 
@@ -36,17 +33,12 @@ def main() :
 
         soup = BeautifulSoup(html, "html.parser")
 
-        dates, prevLink = scrapeLinks(soup)
-        prevLinks.append(prevLink)
+        dates = scrapeLinks(soup)
 
         dates = list(map(lambda x: args_["baseLink"] + x, dates))
         
         fcPages = fcPages + dates
     
-    fcPages.sort()
-    prevLinks.sort()
-
-    print(prevLinks[0])
     for page in fcPages :
         print(page)
 
